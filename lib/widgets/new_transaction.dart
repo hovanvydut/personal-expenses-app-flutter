@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
 
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
   final Function addNewTransaction;
 
   NewTransaction(this.addNewTransaction);
+
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+
+  String titleInput = "";
+  String amountInput = "";
+
+  void submitData() {
+    String title = titleInput;
+    double amount = double.parse(amountInput);
+
+    if (title.isEmpty || amount <= 0) {
+      return;
+    }
+
+    this.widget.addNewTransaction(title, amount);
+
+    // close modal
+    Navigator.of(this.context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,19 +38,18 @@ class NewTransaction extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             TextField(
-                decoration: InputDecoration(labelText: 'Title'),
-                controller: this.titleController),
+              decoration: InputDecoration(labelText: 'Title'),
+              onChanged: (value) => titleInput = value,
+              onSubmitted: (_) => submitData(),
+            ),
             TextField(
               decoration: InputDecoration(labelText: 'Amount'),
-              controller: this.amountController,
+              onChanged: (value) => amountInput = value,
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) => submitData(),
             ),
             ElevatedButton(
-              onPressed: () {
-                String title = this.titleController.text;
-                double amount = double.parse(this.amountController.text);
-
-                this.addNewTransaction(title, amount);
-              },
+              onPressed: submitData,
               child: Text('Add Transaction'),
               style: ElevatedButton.styleFrom(primary: Colors.purple),
             )
