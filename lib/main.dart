@@ -42,15 +42,21 @@ class _MyHomePageState extends State<MyHomePage> {
     Transaction(id: '3', title: 'Food', amount: 39999, date: DateTime.now()),
   ];
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime date) {
     final newTx = new Transaction(
         id: DateTime.now().toString(),
         title: title,
         amount: amount,
-        date: DateTime.now());
+        date: date);
 
     setState(() {
       this.transactions.add(newTx);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      transactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -81,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [Chart(_recentTransactions), TransactionList(transactions)],
+          children: [Chart(_recentTransactions), TransactionList(transactions, _deleteTransaction)],
         ),
       ),
       floatingActionButton: FloatingActionButton(
